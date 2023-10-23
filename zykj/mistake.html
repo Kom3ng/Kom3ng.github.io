@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>错题本图片下载器</title>
+    <script>
+        function getMistakeBooks(token,method) {
+            fetch("http://sxz.api6.zykj.org/api/services/app/MistakeBook/GetMyMistakeBooksAsync", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            })
+                .then(resp => resp.json())
+                .then(data => method(data.result))
+                .catch(e => document.write("Error: " + e));
+        }
+    </script>
+</head>
+<body>
+    <script>
+        let token = sessionStorage.getItem("token");
+        if (!token) window.location.href = "./login.html?fromUrl="+window.location.href;
+        getMistakeBooks(token,data => {
+            data.forEach(mistakeBook => {
+                document.write("<a href='./mistakeBook.html?max=20&skip=0&id="+mistakeBook.id+"'>"+mistakeBook.topic.content+"</a>  共"+mistakeBook.totalQstCount+"个错题<br>");
+            })
+        });
+    </script>
+</body>
+</html>
